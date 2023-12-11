@@ -4,7 +4,7 @@ from app import db
 
 
 class InventoryItem(db.Model):
-    __tablename__ = "inventory"
+    # __tablename__ = "inventory"
 
     sku = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, unique=True, nullable=False)
@@ -13,6 +13,9 @@ class InventoryItem(db.Model):
     amount_sold = db.Column(db.Integer, nullable=False)
     revenue = db.Column(db.Float, nullable=False)
     latest_sale = db.Column(db.DateTime, nullable=False)
+
+    def __init__(self, name):
+        self.name = name
 
     def __repr__(self):
         return "<Inventory item: %r>" % self.name
