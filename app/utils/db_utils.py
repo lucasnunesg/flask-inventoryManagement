@@ -29,18 +29,22 @@ def add_orders():
         customer = random.choice(customers)
 
         order_date = fake.date_time_this_year()
+        shipped_date = None
         shipped_date = random.choices(
-            [None, fake.date_time_between(start_date=order_date)], [10, 90]
+            [None, fake.date_time_between(start_date=order_date)],
+            weights=[10, 90],
         )[0]
 
         delivered_date = None
         if shipped_date:
             delivered_date = random.choices(
-                [None, fake.date_time_between(start_date=shipped_date)], [50, 50]
+                [None, fake.date_time_between(start_date=shipped_date)],
+                weights=[50, 50],
             )[0]
 
         coupon_code = random.choices(
-            [None, "50OFF", "FREESHIPPING", "2FOR1"], [80, 10, 5, 5]
+            [None, "50OFF", "FREESHIPPING", "2FOR1"],
+            weights=[80, 5, 5, 5],
         )[0]
 
         order = Order(

@@ -28,8 +28,8 @@ class Order(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     order_date = db.Column(db.DateTime, default=datetime.utcnow(), nullable=False)
-    shipped_date = db.Column(db.DateTime, default=datetime.utcnow())
-    delivered_date = db.Column(db.DateTime, default=datetime.utcnow())
+    shipped_date = db.Column(db.DateTime)
+    delivered_date = db.Column(db.DateTime)
     coupon_code = db.Column(db.String(50))
     customer_id = db.Column(db.Integer, db.ForeignKey("customer.id"), nullable=False)
 
