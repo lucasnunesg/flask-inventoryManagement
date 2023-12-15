@@ -15,4 +15,4 @@ if __name__ == "__main__":
 
 from app.controllers import default
 
-from .models.tables import InventoryItem
+from .models.tables import Customer, Order, Product, order_product

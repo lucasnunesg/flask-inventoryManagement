@@ -3,49 +3,42 @@ from datetime import datetime
 from app import db
 
 
-class InventoryItem(db.Model):
-    # __tablename__ = "inventory"
+class Customer(db.Model):
+    __tablename__ = "customer"
 
-    sku = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String, unique=True, nullable=False)
-    unit_cost = db.Column(db.Float, nullable=False)
-    amount_in_stock = db.Column(db.Integer, nullable=False)
-    amount_sold = db.Column(db.Integer, nullable=False)
-    revenue = db.Column(db.Float, nullable=False)
-    latest_sale = db.Column(db.DateTime, nullable=False)
-
-    def __init__(self, name):
-        self.name = name
-
-    def __repr__(self):
-        return "<Inventory item: %r>" % self.name
-
-
-""" 
-UPCOMING MODELS (WILL BE IMPLEMENTED LATER)
-
-class User(db.Model):
-    __tablename__ = "users"
-
-    id = db.Column(db.Integer, primary_key=True, nullable=False)
-    username = db.Column(db.String, unique=True, nullable=False)
-    password = db.Column(db.String, nullable=False)
-    name = db.Column(db.String, nullable=False)
-    email = db.Column(db.String, unique=True, nullable=False)
-    created_date = db.Column(db.DateTime, default=datetime.utcnow(), nullable=False)
-    role = db.relationship("Role", backref="user", lazy=True)
-
-    def __repr__(self):
-        return "<User %r>" % self.username
-    
-class Role(db.Model):
-    __tablename__ = "posts"
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String, unique=True, nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
-    usernames = db.relationship("User", foreign_keys=user_id)
+    first_name = db.Column(db.String(50), nullable=False)
+    last_name = db.Column(db.String(50), nullable=False)
+    address = db.Column(db.String(500), nullable=False)
+    postcode = db.Column(db.String(50), nullable=False)
+    email = db.Column(db.String(50), nullable=False, unique=True)
 
-    def __repr__(self):
-        return "<Role %r>" % self.name
-    
-"""
+    orders = db.relationship("Order", backref="customer")
+
+
+order_product = db.Table(
+    "order_product",
+    db.Column("order_id", db.Integer, db.ForeignKey("order.id"), primary_key=True),
+    db.Column("product_id", db.Integer, db.ForeignKey("product.id"), primary_key=True),
+)
+
+
+class Order(db.Model):
+    __tablename__ = "order"
+
+    id = db.Column(db.Integer, primary_key=True)
+    order_date = db.Column(db.DateTime, default=datetime.utcnow(), nullable=False)
+    shipped_date = db.Column(db.DateTime, default=datetime.utcnow())
+    delivered_date = db.Column(db.DateTime, default=datetime.utcnow())
+    coupon_code = db.Column(db.String(50))
+    customer_id = db.Column(db.Integer, db.ForeignKey("customer.id"), nullable=False)
+
+    products = db.relationship("Product", secondary=order_product)
+
+
+class Product(db.Model):
+    __tablename__ = "product"
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50), nullable=False, unique=True)
+    price = db.Column(db.Float, nullable=False)
