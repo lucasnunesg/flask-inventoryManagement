@@ -28,7 +28,7 @@ def add_orders():
     for _ in range(1000):
         customer = random.choice(customers)
 
-        order_date = fake.data_time_this_year()
+        order_date = fake.date_time_this_year()
         shipped_date = random.choices(
             [None, fake.date_time_between(start_date=order_date)], [10, 90]
         )[0]
@@ -68,7 +68,7 @@ def add_products():
 # You don't have to add products exactly when you create an order, this operation can be delayed
 def add_order_products():
     orders = Order.query.all()
-    products = Products.query.all()
+    products = Product.query.all()
 
     # For every order select a random number of products between 1 and 5
     for order in orders:
@@ -80,7 +80,17 @@ def add_order_products():
     db.session.commit()
 
 
+def clear_databases():
+    for i in [Customer, Order, Product]:
+        try:
+            i.query.delete()
+            db.session.commit()
+        except:
+            db.session.rollback()
+
+
 def create_random_data():
+    clear_databases()
     add_customers()
     add_orders()
     add_products()
