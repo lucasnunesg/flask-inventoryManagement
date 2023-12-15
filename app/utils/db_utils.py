@@ -1,7 +1,9 @@
 import random
+from sqlite3 import IntegrityError
 
 import faker_commerce
 from faker import Faker
+from sqlalchemy import exc
 
 from app import db
 from app.models.tables import Customer, Order, Product
@@ -89,12 +91,13 @@ def clear_databases():
         try:
             i.query.delete()
             db.session.commit()
-        except:
+        except exc.SQLAlchemyError:
             db.session.rollback()
 
 
-def create_random_data():
-    clear_databases()
+def create_random_data(clear_db=True):
+    if clear_db:
+        clear_databases()
     add_customers()
     add_orders()
     add_products()

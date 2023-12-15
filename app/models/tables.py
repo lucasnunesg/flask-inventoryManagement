@@ -15,6 +15,9 @@ class Customer(db.Model):
 
     orders = db.relationship("Order", backref="customer")
 
+    def __repr__(self):
+        return "<Customer: %r>" % self.first_name + self.last_name
+
 
 order_product = db.Table(
     "order_product",
@@ -35,6 +38,9 @@ class Order(db.Model):
 
     products = db.relationship("Product", secondary=order_product)
 
+    def __repr__(self):
+        return "<Order ID: %r>" % self.id
+
 
 class Product(db.Model):
     __tablename__ = "product"
@@ -42,3 +48,6 @@ class Product(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False, unique=True)
     price = db.Column(db.Float, nullable=False)
+
+    def __repr__(self):
+        return "<Product: %r>" % self.name
