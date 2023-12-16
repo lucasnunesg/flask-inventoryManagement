@@ -19,13 +19,6 @@ class Customer(db.Model):
         return "<Customer: %r>" % self.first_name + self.last_name
 
 
-order_product = db.Table(
-    "order_product",
-    db.Column("order_id", db.Integer, db.ForeignKey("order.id"), primary_key=True),
-    db.Column("product_id", db.Integer, db.ForeignKey("product.id"), primary_key=True),
-)
-
-
 class Order(db.Model):
     __tablename__ = "order"
 
@@ -36,7 +29,7 @@ class Order(db.Model):
     coupon_code = db.Column(db.String(50))
     customer_id = db.Column(db.Integer, db.ForeignKey("customer.id"), nullable=False)
 
-    products = db.relationship("Product", secondary=order_product)
+    order_items = db.relationship("OrderItem", backref="order")
 
     def __repr__(self):
         return "<Order ID: %r>" % self.id
@@ -51,3 +44,12 @@ class Product(db.Model):
 
     def __repr__(self):
         return "<Product: %r>" % self.name
+
+
+class OrderItem(db.Model):
+    __tablename__ = "order_item"
+
+    order_id = db.Column(db.Integer, db.ForeignKey("order.id"), primary_key=True)
+    item_id = db.Column(db.Integer, db.ForeignKey("product.id"), primary_key=True)
+    quantity = db.Column(db.Integer, nullable=False)
+    total_price = db.Column(db.Integer, nullable=False)

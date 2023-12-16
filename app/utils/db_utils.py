@@ -6,7 +6,7 @@ from faker import Faker
 from sqlalchemy import exc
 
 from app import db
-from app.models.tables import Customer, Order, Product
+from app.models.tables import Customer, Order, OrderItem, Product
 
 fake = Faker()
 
@@ -80,8 +80,18 @@ def add_order_products():
     for order in orders:
         k = random.randint(1, 5)
         purchased_products = random.sample(products, k)
+
+        for product in purchased_products:
+            order_item = OrderItem(
+                order_id=order.id,
+                item_id=product.id,
+                quantity=k,
+                total_price=k * product.price,
+            )
+            db.session.add(order_item)
+
         # Adding the list of purchased products to the order
-        order.products.extend(purchased_products)
+        # order.products.extend(purchased_products)
 
     db.session.commit()
 
