@@ -1,0 +1,29 @@
+{% extends "index.html" %}
+
+{% block body %}
+<div class="content-section">
+    <div class="title">    
+        <h1>Stock overview</h1>
+    </div>
+    <table class="table table-striped table-borderless table-hover text-center">
+        <thead class="table-dark table-sm">
+            <tr>
+                <th scope="col">Product ID</th>
+                <th scope="col">Name</th>
+                <th scope="col">Quantity available</th>
+                <th scope="col">Edit</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for product in products %}
+            <tr>
+                <th scope="row">{{ product.id }}</th>
+                <th scope="row">{{ product.name }}</th>
+                <th scope="row">{{ product.quantity_available }}</th>
+                <td><a style="text-decoration: none;" href="{{ url_for('product', id=product.id)}}"> Edit Product </a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock body %}

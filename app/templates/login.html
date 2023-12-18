@@ -1,0 +1,14 @@
+{% extends "index.html" %}
+{% block content %}
+<form action="submit" method="POST"></form>
+
+<div class="form-group">
+
+</div>
+    {{ form.csrf_token }}
+    {{ form.username.label }}
+    {{ form.username }}
+    {{ form.password.label }}
+    {{ form.password }}
+    {{ form.username }}
+{% endblock content %}

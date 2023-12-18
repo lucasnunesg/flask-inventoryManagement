@@ -1,3 +1,4 @@
 SQLALCHEMY_DATABASE_URI = "sqlite:///storage.db"
-FLASK_DEBUG = 1
 DEBUG = True
+FLASK_DEBUG = 1
+SECRET_KEY = "very-safe-key-indeed"

@@ -1,0 +1,28 @@
+{% extends "index.html" %}
+{% block body %}
+
+<div class="content-section">
+    <h3 class="h3-product-name">Product to be updated: {{ product.name }}</h3><br>
+    {% block form %}
+    <form method="POST" action="">
+        {{ form.csrf_token }}
+            <legend class="border-bottom pd-2 mb-4 text-center">Fields to be updated:</legend>
+            <div class="form-group">
+                {{ form.name.label }}
+                {{ form.name(class="form-control", placeholder=product.name) }}
+                {{ form.price.label }}
+                {{ form.price(class="form-control", placeholder=product.price) }}
+                {{ form.quantity_available.label }}
+                {{ form.quantity_available(class="form-control", placeholder=product.quantity_available) }}
+                
+                {{ form.submit_button }}
+                
+            </div>
+            <div class="form-group pt-4">
+                <button class="btn btn-outline-success" type="submit">{{form.submit_button}}</button>
+            </div>
+    </form>
+    {% endblock form %}
+</div>
+
+{% endblock body %}

@@ -66,7 +66,11 @@ def add_products():
     for _ in range(10):
         # Create fake product names using faker-commerce module
         fake.add_provider(faker_commerce.Provider)
-        product = Product(name=fake.ecommerce_name(), price=random.randint(10, 200))
+        product = Product(
+            name=fake.ecommerce_name(),
+            price=random.randint(10, 200),
+            quantity_available=random.randint(1, 50),
+        )
         db.session.add(product)
     db.session.commit()
 
@@ -90,14 +94,11 @@ def add_order_products():
             )
             db.session.add(order_item)
 
-        # Adding the list of purchased products to the order
-        # order.products.extend(purchased_products)
-
     db.session.commit()
 
 
 def clear_databases():
-    for i in [Customer, Order, Product]:
+    for i in [Customer, Order, Product, OrderItem]:
         try:
             i.query.delete()
             db.session.commit()

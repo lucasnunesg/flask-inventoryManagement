@@ -4,15 +4,12 @@ from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 
-app.config.from_object("config")
+app.config.from_pyfile("config.py")
 
 db = SQLAlchemy(app)
 
 migrate = Migrate(app, db)
 
-if __name__ == "__main__":
-    app.run()
-
 from app.controllers import default
 
-from .models.tables import Customer, Order, Product, order_product
+from .models.tables import Customer, Order, OrderItem, Product
