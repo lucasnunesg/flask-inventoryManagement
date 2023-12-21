@@ -1,0 +1,54 @@
+{% extends "index.html" %}
+
+{% block title %}IMS - Restock{% endblock title %}
+
+{% block head %}
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+{% endblock head %}
+
+{% block body %}
+<h1>Create Order</h1>
+    <form method="POST" action="{{ url_for('create_order') }}" id="orderForm">
+        {{ form.hidden_tag() }}
+        {{ form.csrf_token }}
+        <div id="saleItemsContainer">
+            {% for sale_item_form in form.sale_items %}
+                <fieldset>
+                    <legend>Product {{ loop.index }}</legend>
+                    {{ sale_item_form.hidden_tag() }}
+                    {{ sale_item_form.product_id.label }} {{ sale_item_form.product_id }}
+                    {{ sale_item_form.quantity.label }} {{ sale_item_form.quantity }}
+                </fieldset>
+            {% endfor %}
+        </div>
+        <input type="button" value="Add Item" onclick="addSaleItem()">
+        {{ form.submit() }}
+    </form>
+
+    <script>
+        function addSaleItem() {
+            var container = document.getElementById('saleItemsContainer');
+            var totalItemsField = document.getElementById('total_items');
+            var totalItems = parseInt(totalItemsField.value) || 0;
+
+            var newFieldset = document.createElement('fieldset');
+            newFieldset.innerHTML = '<legend>Product ' + (totalItems + 1) + '</legend>' +
+                                    '<input type="hidden" id="sale_items-' + totalItems + '-product_id" name="sale_items-' + totalItems + '-product_id" required>' +
+                                    '<label for="sale_items-' + totalItems + '-product_id">Product ID:</label> ' +
+                                    '<input type="text" id="sale_items-' + totalItems + '-product_id" name="sale_items-' + totalItems + '-product_id" required>' +
+                                    '<label for="sale_items-' + totalItems + '-quantity">Quantity:</label> ' +
+                                    '<input type="text" id="sale_items-' + totalItems + '-quantity" name="sale_items-' + totalItems + '-quantity" required>';
+            
+            container.appendChild(newFieldset);
+
+            totalItemsField.value = totalItems + 1;
+        }
+
+        document.getElementById("orderForm").addEventListener("submit", function(){
+            var totalItemsField = document.getElementById("total_items");
+            totalItemsField.value = 0;
+        });
+
+    </script>
+</body>
+{% endblock body %}

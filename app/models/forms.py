@@ -1,6 +1,9 @@
 from flask_wtf import FlaskForm
 from wtforms import (
     BooleanField,
+    FieldList,
+    FormField,
+    HiddenField,
     IntegerField,
     PasswordField,
     StringField,
@@ -32,8 +35,17 @@ class EditProductForm(FlaskForm):
             raise ValidationError("Another product with the same name already exists")"""
 
 
-class SaleForm(FlaskForm):
-    pass
+class OrderItemForm(FlaskForm):
+    product_id = IntegerField("Product ID", validators=[DataRequired()])
+    quantity = IntegerField("Quantity", validators=[DataRequired()])
+
+
+class OrderForm(FlaskForm):
+    """A form for one or more item"""
+
+    total_items = HiddenField("Total Items")
+    order_items = FieldList(FormField(OrderItemForm), min_entries=1)
+    submit = SubmitField("Submit")
 
 
 class LoginForm(FlaskForm):

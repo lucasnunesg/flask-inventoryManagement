@@ -1,11 +1,9 @@
-from flask import render_template
+from flask import redirect, render_template, url_for
 
-from app import app
+from app import app, db
 
-from ..models.forms import EditProductForm
+from ..models.forms import EditProductForm, OrderForm
 from ..models.tables import Product
-
-# from app.models.forms import LoginForm
 
 
 @app.route("/", methods=["GET", "POST"])
@@ -13,9 +11,10 @@ def index():
     return render_template("index.html")
 
 
-@app.route("/restock", methods=["GET", "POST"])
-def restock():
-    return render_template("restock.html")
+@app.route("/create-order", methods=["GET", "POST"])
+def create_order():
+    form = OrderForm()
+    return render_template("create_order.html", form=form)
 
 
 @app.route("/products", methods=["GET", "POST"])
@@ -26,7 +25,7 @@ def products():
 
 @app.route("/logout", methods=["GET", "POST"])
 def logout():
-    return render_template("restock.html")
+    return render_template("index.html")
 
 
 @app.route("/product/<id>", methods=["GET", "POST"])
@@ -45,5 +44,6 @@ def update_product(id):
         product.name = form.name.data
         product.price = form.price.data
         product.quantity_available = form.quantity_available.data
-        return render_template("products_list.html", products=products)
+        db.session.commit()
+        return redirect(url_for("products", products=products))
     return render_template("edit_product.html", product=product, form=form)
