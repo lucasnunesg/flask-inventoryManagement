@@ -12,7 +12,7 @@
         {{ form.hidden_tag() }}
         {{ form.csrf_token }}
         <div id="saleItemsContainer">
-            {% for sale_item_form in form.sale_items %}
+            {% for sale_item_form in form.order_items %}
                 <fieldset>
                     <legend>Product {{ loop.index }}</legend>
                     {{ sale_item_form.hidden_tag() }}
