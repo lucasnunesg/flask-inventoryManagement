@@ -37,8 +37,8 @@ class EditProductForm(FlaskForm):
 
 
 class OrderItemForm(FlaskForm):
-    product_id = IntegerField("Product ID", validators=None)
-    quantity = IntegerField("Quantity", validators=None)
+    product_id = SelectField("Product ID", coerce=int, validators=[DataRequired()])
+    quantity = IntegerField("Quantity", validators=[DataRequired()])
 
     """def validate_quantity(self, quantity):
         product = Product.query.get(self.product_id)

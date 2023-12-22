@@ -14,14 +14,15 @@ def index():
 @app.route("/create-order", methods=["GET", "POST"])
 def create_order():
     form = OrderForm()
-    form.order_items.choices = [
-        (product.id, product.name) for product in Product.query.all()
+    products = Product.query.all()
+    form.order_items[0].product_id.choices = [
+        (product.id, product.name) for product in products
     ]
     if form.validate_on_submit():
         print("Validação OK")
     else:
         print("Validação NOK")
-    return render_template("create_order.html", form=form)
+    return render_template("create_order.html", form=form, products=products)
 
 
 @app.route("/products", methods=["GET", "POST"])
