@@ -39,26 +39,47 @@ class EditProductForm(FlaskForm):
 class OrderItemForm(FlaskForm):
     product_id = SelectField("Product ID", coerce=int, validators=[DataRequired()])
     quantity = IntegerField("Quantity", validators=[DataRequired()])
+    submit = SubmitField("Submit Item")
 
-    """def validate_quantity(self, quantity):
-        product = Product.query.get(self.product_id)
+    def validate_quantity(self, quantity):
+        product = Product.query.get(self.product_id.data)
         stock_quantity = product.quantity_available
-        if quantity > stock_quantity:
+        if quantity.data > stock_quantity:
             raise ValidationError(
-                "Not enough stock for this item. Quantity available" + stock_quantity
-            )"""
+                f"Not enough stock for this item. Quantity available: {stock_quantity}"
+            )
+
+
+class AddOrderItemForm(FlaskForm):
+    product_id = SelectField("Product ID", coerce=int, validators=[DataRequired()])
+    quantity = IntegerField("Quantity", validators=[DataRequired()])
+
+    def validate_quantity(self, quantity):
+        product = Product.query.get(self.product_id.data)
+        """if not product:
+            raise ValidationError("Invalid product selected")"""
+
+        stock_quantity = product.quantity_available
+        if quantity.data > stock_quantity:
+            raise ValidationError(
+                f"Not enough stock for this item. Quantity available: {stock_quantity}"
+            )
+
+    submit = SubmitField("Submit Item")
 
 
 class OrderForm(FlaskForm):
     """A form for one or more item"""
 
     total_items = HiddenField("Total Items")
-    order_items = FieldList(FormField(OrderItemForm), min_entries=1)
+    order_items = FieldList(FormField(OrderItemForm), max_entries=1)
     submit = SubmitField("Submit")
 
-    def validate_order_items(self, order_items):
+    """def validate_order_items(self, order_items):
         print("Order Items:", self.order_items.data)
         print("Total Items:", self.total_items.data)
+        order_item = order_items[0]
+        print("AAAAA ", order_item.product_id.data)
         for item in order_items:
             product_id = item.product_id.data
             quantity = item.quantity.data
@@ -70,7 +91,7 @@ class OrderForm(FlaskForm):
             if quantity > stock_quantity:
                 raise ValidationError(
                     "Not enough stock for this item. Quantity available"
-                )
+                )"""
 
 
 class LoginForm(FlaskForm):

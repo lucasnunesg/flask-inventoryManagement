@@ -27,7 +27,7 @@ def add_customers():
 def add_orders():
     customers = Customer.query.all()
 
-    for _ in range(1000):
+    for _ in range(100):
         customer = random.choice(customers)
 
         order_date = fake.date_time_this_year()

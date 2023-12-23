@@ -1,0 +1,42 @@
+{% extends "index.html" %}
+{% block body %}
+
+
+
+<div class="content-section">
+    <div class="title">    
+        <h1>Order {{order}}</h1>
+    </div>
+    <table class="table table-striped table-borderless table-hover text-center">
+        <thead class="table-dark table-sm">
+            <tr>
+                <th scope="col">Product ID</th>
+                <th scope="col">Name</th>
+                <th scope="col">Quantity</th>
+                <th scope="col">Edit</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for product, product_name in zip(order_items, product_names) %}
+            <tr>
+                <th scope="row">{{ product.item_id }}</th>
+                <th scope="row">{{ product_name }}</th>
+                <th scope="row">{{ product.quantity }}</th>
+                <td><a style="text-decoration: none;" href=""> Remove Product </a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<h1>Add Product to Order</h1>
+    <form method="POST" action="{{ url_for('order',id=order) }}" id="orderForm">
+        {{ form.csrf_token }}
+        {{form.product_id.label}}
+        {{form.product_id}}
+        {{form.quantity.label}}
+        {{form.quantity}}
+        </div>
+        {{ form.submit() }}
+    </form>
+
+{% endblock body %}
