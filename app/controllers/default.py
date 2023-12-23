@@ -29,7 +29,7 @@ def create_order():
         db.session.commit()
         print("ORDERRR = ", order)
         return redirect(url_for("order", id=order.id))
-    return render_template("create_order_2.html", form=form, products=products)
+    return render_template("create_order.html", form=form, products=products)
 
 
 @app.route("/order/<int:id>", methods=["GET", "POST"])

@@ -9,43 +9,12 @@
 {% block body %}
 <h1>Create Order</h1>
     <form method="POST" action="{{ url_for('create_order') }}" id="orderForm">
-        {{ form.hidden_tag() }}
         {{ form.csrf_token }}
-        <div id="saleItemsContainer">
-            {% for sale_item_form in form.order_items %}
-                <fieldset>
-                    <legend>Product {{ loop.index }}</legend>
-                    {{ sale_item_form.hidden_tag() }}
-                    
-                    <!-- Modificado para um campo SelectField -->
-                    {{ sale_item_form.product_id.label }} {{ sale_item_form.product_id(class_="form-control") }}
-                    
-                    {{ sale_item_form.quantity.label }} {{ sale_item_form.quantity(class_="form-control") }}
-                </fieldset>
-            {% endfor %}
+        {{form.product_id.label}}
+        {{form.product_id}}
+        {{form.quantity.label}}
+        {{form.quantity}}
         </div>
         {{ form.submit() }}
     </form>
-
-    <script>
-        var totalItems = {{ form.total_items.data|int or 0 }};
-        
-        function addSaleItem() {
-            var container = document.getElementById('saleItemsContainer');
-            var newFieldset = document.createElement('fieldset');
-            newFieldset.innerHTML = '<legend>Product ' + (totalItems + 1) + '</legend>' +
-                                    '<input type="hidden" name="total_items" value="' + (totalItems + 1) + '">' +
-                                    '<label for="sale_items-' + totalItems + '-product_id">Product:</label>' +
-                                    '<select id="sale_items-' + totalItems + '-product_id" name="sale_items-' + totalItems + '-product_id" class="form-control">' +
-                                    '{% for product in products %}' +
-                                    '<option value="{{ product.id }}">{{ product.name }}</option>' +
-                                    '{% endfor %}' +
-                                    '</select>' +
-                                    '<label for="sale_items-' + totalItems + '-quantity">Quantity:</label>' +
-                                    '<input type="text" id="sale_items-' + totalItems + '-quantity" name="sale_items-' + totalItems + '-quantity" class="form-control" required>';
-            
-            container.appendChild(newFieldset);
-            totalItems++;
-        }
-    </script>
 {% endblock body %}
