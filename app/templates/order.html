@@ -7,12 +7,14 @@
     <div class="title">    
         <h1>Order {{order}} Customer {{customer}}</h1>
     </div>
+    
     <table class="table table-striped table-borderless table-hover text-center">
         <thead class="table-dark table-sm">
             <tr>
                 <th scope="col">Product ID</th>
                 <th scope="col">Name</th>
                 <th scope="col">Quantity</th>
+                <th scope="col">Total Price</th>
                 <th scope="col">Edit</th>
             </tr>
         </thead>
@@ -22,13 +24,25 @@
                 <th scope="row">{{ product.item_id }}</th>
                 <th scope="row">{{ product_name }}</th>
                 <th scope="row">{{ product.quantity }}</th>
-                <td><a style="text-decoration: none;" href=""> Remove Product </a></td>
+                <th scope="row">{{ product.total_price }}</th>
+                <td><a style="text-decoration: none; color:red; font-weight:red;" href=""> Remove Product </a></td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
 </div>
 <h1>Add Product to Order</h1>
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="alert alert-danger">
+                <ul>
+                    {% for message in messages %}
+                        <li>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+    {% endwith %}
     <form method="POST" action="{{ url_for('order',id=order) }}" id="orderForm">
         {{ form.csrf_token }}
         {{form.product_id.label}}

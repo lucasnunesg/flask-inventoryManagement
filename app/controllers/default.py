@@ -1,4 +1,5 @@
-from flask import redirect, render_template, request, url_for
+from flask import flash, redirect, render_template, request, url_for
+from sqlalchemy.exc import IntegrityError
 
 from app import app, db
 
@@ -11,84 +12,10 @@ def index():
     return render_template("index.html")
 
 
-@app.route("/create-order", methods=["GET", "POST"])
-def create_order():
-    form = OrderItemForm()
-    products = Product.query.all()
-    customers = Customer.query.all()
-    form.product_id.choices = [(product.id, product.name) for product in products]
-    form.customer_id.choices = [
-        (customer.id, customer.first_name) for customer in customers
-    ]
-
-    if form.validate_on_submit():
-        customer_id = form.customer_id.data
-        order = Order(customer_id=customer_id)
-        order_item = OrderItem(
-            item_id=form.product_id.data, quantity=form.quantity.data, total_price=1
-        )
-        db.session.add(order_item)
-
-        order.order_items.append(order_item)
-        db.session.add(order)
-        db.session.commit()
-        print("ORDERRR = ", order)
-        return redirect(url_for("order", id=order.id, customer_id=customer_id))
-    return render_template("create_order.html", form=form, products=products)
-
-
-@app.route("/order/<int:id>", methods=["GET", "POST"])
-def order(id):
-    form = AddOrderItemForm()
-    products = Product.query.all()
-    form.product_id.choices = [(product.id, product.name) for product in products]
-
-    customer_id = request.args.get("customer_id")  # Obtém o valor do parâmetro da URL
-    customer = Customer.query.get(customer_id)
-
-    order_items = OrderItem.query.filter_by(order_id=id).all()
-    product_names = [Product.query.get(item.item_id).name for item in order_items]
-    print(type(id))
-    print("ORDER ITEMSSSSS: ", order_items)
-    order = Order.query.get(id)
-
-    if form.validate_on_submit():
-        print("CHECKPOINT")
-        customer = Customer.query.get(customer_id)
-        print("ID: ", id)
-        print("TENTANDO ACESSAR ORDER ", order)
-        new_order_item = OrderItem(
-            order_id=order.id,
-            item_id=form.product_id.data,
-            quantity=form.quantity.data,
-            total_price=2,
-        )
-        db.session.add(new_order_item)
-        db.session.commit()
-        order.order_items.append(new_order_item)
-        db.session.commit()
-        return redirect(url_for("order", id=order.id, customer_id=customer_id))
-
-    return render_template(
-        "order.html",
-        order=id,
-        order_items=order_items,
-        product_names=product_names,
-        customer=customer,
-        zip=zip,
-        form=form,
-    )
-
-
 @app.route("/products", methods=["GET", "POST"])
 def products():
     products = Product.query.order_by(Product.id).all()
     return render_template("products_list.html", products=products)
-
-
-@app.route("/logout", methods=["GET", "POST"])
-def logout():
-    return render_template("index.html")
 
 
 @app.route("/product/<id>", methods=["GET", "POST"])
@@ -110,3 +37,92 @@ def update_product(id):
         db.session.commit()
         return redirect(url_for("products", products=products))
     return render_template("edit_product.html", product=product, form=form)
+
+
+@app.route("/add-product", methods=["GET", "POST"])
+def add_product():
+    return render_template("add_product.html")
+
+
+@app.route("/create-order", methods=["GET", "POST"])
+def create_order():
+    form = OrderItemForm()
+    products = Product.query.all()
+    customers = Customer.query.all()
+    form.product_id.choices = [(product.id, product.name) for product in products]
+    form.customer_id.choices = [
+        (customer.id, customer.first_name) for customer in customers
+    ]
+
+    if form.validate_on_submit():
+        customer_id = form.customer_id.data
+        order = Order(customer_id=customer_id)
+        product = Product.query.get(form.product_id.data)
+        quantity = form.quantity.data
+        order_item = OrderItem(
+            item_id=form.product_id.data,
+            quantity=quantity,
+            total_price=product.price * quantity,
+        )
+        db.session.add(order_item)
+
+        order.order_items.append(order_item)
+        db.session.add(order)
+        db.session.commit()
+        return redirect(url_for("order", id=order.id, customer_id=customer_id))
+    return render_template("create_order.html", form=form, products=products)
+
+
+@app.route("/order/<int:id>", methods=["GET", "POST"])
+def order(id):
+    form = AddOrderItemForm()
+    products = Product.query.all()
+    form.product_id.choices = [(product.id, product.name) for product in products]
+
+    customer_id = request.args.get("customer_id")  # Obtém o valor do parâmetro da URL
+    customer = Customer.query.get(customer_id)
+
+    order_items = OrderItem.query.filter_by(order_id=id).all()
+    product_names = [Product.query.get(item.item_id).name for item in order_items]
+    print(type(id))
+    order = Order.query.get(id)
+
+    if form.validate_on_submit():
+        customer = Customer.query.get(customer_id)
+        product = Product.query.get(form.product_id.data)
+        quantity = form.quantity.data
+        new_order_item = OrderItem(
+            order_id=order.id,
+            item_id=form.product_id.data,
+            quantity=quantity,
+            total_price=product.price * quantity,
+        )
+        try:
+            db.session.add(new_order_item)
+            db.session.commit()
+            order.order_items.append(new_order_item)
+            db.session.commit()
+        except IntegrityError as e:
+            db.session.rollback()
+            error_info = str(e.orig)
+            if "UNIQUE constraint" in error_info:
+                flash("Same product ID already in order", "error")
+                print("ERRO INTEGRITY")
+            else:
+                flash("Unknown error", "error")
+        return redirect(url_for("order", id=order.id, customer_id=customer_id))
+
+    return render_template(
+        "order.html",
+        order=id,
+        order_items=order_items,
+        product_names=product_names,
+        customer=customer,
+        zip=zip,
+        form=form,
+    )
+
+
+@app.route("/logout", methods=["GET", "POST"])
+def logout():
+    return render_template("index.html")
