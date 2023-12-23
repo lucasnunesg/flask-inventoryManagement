@@ -37,6 +37,7 @@ class EditProductForm(FlaskForm):
 
 
 class OrderItemForm(FlaskForm):
+    customer_id = SelectField("Customer", coerce=int, validators=[DataRequired()])
     product_id = SelectField("Product ID", coerce=int, validators=[DataRequired()])
     quantity = IntegerField("Quantity", validators=[DataRequired()])
     submit = SubmitField("Submit Item")

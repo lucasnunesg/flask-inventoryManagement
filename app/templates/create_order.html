@@ -10,6 +10,8 @@
 <h1>Create Order</h1>
     <form method="POST" action="{{ url_for('create_order') }}" id="orderForm">
         {{ form.csrf_token }}
+        {{form.customer_id.label}}
+        {{form.customer_id}}
         {{form.product_id.label}}
         {{form.product_id}}
         {{form.quantity.label}}

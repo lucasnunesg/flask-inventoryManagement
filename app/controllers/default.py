@@ -3,7 +3,7 @@ from flask import redirect, render_template, url_for
 from app import app, db
 
 from ..models.forms import AddOrderItemForm, EditProductForm, OrderForm, OrderItemForm
-from ..models.tables import Order, OrderItem, Product
+from ..models.tables import Customer, Order, OrderItem, Product
 
 
 @app.route("/", methods=["GET", "POST"])
@@ -15,10 +15,14 @@ def index():
 def create_order():
     form = OrderItemForm()
     products = Product.query.all()
+    customers = Customer.query.all()
     form.product_id.choices = [(product.id, product.name) for product in products]
+    form.customer_id.choices = [
+        (customer.id, customer.first_name) for customer in customers
+    ]
 
     if form.validate_on_submit():
-        order = Order(customer_id=1)
+        order = Order(customer_id=form.customer_id.data)
         order_item = OrderItem(
             item_id=form.product_id.data, quantity=form.quantity.data, total_price=1
         )
