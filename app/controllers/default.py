@@ -1,4 +1,4 @@
-from flask import redirect, render_template, url_for
+from flask import redirect, render_template, request, url_for
 
 from app import app, db
 
@@ -22,7 +22,8 @@ def create_order():
     ]
 
     if form.validate_on_submit():
-        order = Order(customer_id=form.customer_id.data)
+        customer_id = form.customer_id.data
+        order = Order(customer_id=customer_id)
         order_item = OrderItem(
             item_id=form.product_id.data, quantity=form.quantity.data, total_price=1
         )
@@ -32,7 +33,7 @@ def create_order():
         db.session.add(order)
         db.session.commit()
         print("ORDERRR = ", order)
-        return redirect(url_for("order", id=order.id))
+        return redirect(url_for("order", id=order.id, customer_id=customer_id))
     return render_template("create_order.html", form=form, products=products)
 
 
@@ -42,15 +43,19 @@ def order(id):
     products = Product.query.all()
     form.product_id.choices = [(product.id, product.name) for product in products]
 
+    customer_id = request.args.get("customer_id")  # Obtém o valor do parâmetro da URL
+    customer = Customer.query.get(customer_id)
+
     order_items = OrderItem.query.filter_by(order_id=id).all()
     product_names = [Product.query.get(item.item_id).name for item in order_items]
     print(type(id))
     print("ORDER ITEMSSSSS: ", order_items)
+    order = Order.query.get(id)
 
     if form.validate_on_submit():
         print("CHECKPOINT")
+        customer = Customer.query.get(customer_id)
         print("ID: ", id)
-        order = Order.query.get(id)
         print("TENTANDO ACESSAR ORDER ", order)
         new_order_item = OrderItem(
             order_id=order.id,
@@ -62,13 +67,14 @@ def order(id):
         db.session.commit()
         order.order_items.append(new_order_item)
         db.session.commit()
-        return redirect(url_for("order", id=order.id))
+        return redirect(url_for("order", id=order.id, customer_id=customer_id))
 
     return render_template(
         "order.html",
         order=id,
         order_items=order_items,
         product_names=product_names,
+        customer=customer,
         zip=zip,
         form=form,
     )

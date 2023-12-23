@@ -32,7 +32,7 @@ class Order(db.Model):
     order_items = db.relationship("OrderItem", backref="order")
 
     def __repr__(self):
-        return "<Order ID: %r>" % self.id
+        return f"<Order ID: {self.id}, Customer: {self.customer_id}"
 
 
 class Product(db.Model):

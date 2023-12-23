@@ -5,7 +5,7 @@
 
 <div class="content-section">
     <div class="title">    
-        <h1>Order {{order}}</h1>
+        <h1>Order {{order}} Customer {{customer}}</h1>
     </div>
     <table class="table table-striped table-borderless table-hover text-center">
         <thead class="table-dark table-sm">
@@ -34,6 +34,11 @@
         {{form.product_id.label}}
         {{form.product_id}}
         {{form.quantity.label}}
+        {% if form.quantity.errors %}
+            {% for error in form.quantity.errors %}
+            <p style="color:red; font-weight:bold">{{error}}</p>    
+            {% endfor %}
+        {% endif %}
         {{form.quantity}}
         </div>
         {{ form.submit() }}

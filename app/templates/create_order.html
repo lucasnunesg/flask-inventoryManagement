@@ -15,6 +15,11 @@
         {{form.product_id.label}}
         {{form.product_id}}
         {{form.quantity.label}}
+        {% if form.quantity.errors %}
+            {% for error in form.quantity.errors %}
+            <p style="color:red; font-weight:bold">{{error}}</p>    
+            {% endfor %}
+        {% endif %}
         {{form.quantity}}
         </div>
         {{ form.submit() }}
