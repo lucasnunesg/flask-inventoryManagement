@@ -79,13 +79,16 @@ def order(id):
     products = Product.query.all()
     form.product_id.choices = [(product.id, product.name) for product in products]
 
-    customer_id = request.args.get("customer_id")  # Obtém o valor do parâmetro da URL
+    customer_id = request.args.get("customer_id")
     customer = Customer.query.get(customer_id)
 
     order_items = OrderItem.query.filter_by(order_id=id).all()
     product_names = [Product.query.get(item.item_id).name for item in order_items]
     print(type(id))
     order = Order.query.get(id)
+    products_for_order = {
+        item.item_id: Product.query.get(item.item_id) for item in order_items
+    }
 
     if form.validate_on_submit():
         customer = Customer.query.get(customer_id)
@@ -120,6 +123,7 @@ def order(id):
         customer=customer,
         zip=zip,
         form=form,
+        products_for_order=products_for_order,
     )
 
 

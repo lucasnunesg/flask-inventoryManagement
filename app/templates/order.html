@@ -14,19 +14,22 @@
                 <th scope="col">Product ID</th>
                 <th scope="col">Name</th>
                 <th scope="col">Quantity</th>
+                <th scope="col">Unit Price</th>
                 <th scope="col">Total Price</th>
                 <th scope="col">Edit</th>
             </tr>
         </thead>
         <tbody>
             {% for product, product_name in zip(order_items, product_names) %}
-            <tr>
-                <th scope="row">{{ product.item_id }}</th>
-                <th scope="row">{{ product_name }}</th>
-                <th scope="row">{{ product.quantity }}</th>
-                <th scope="row">{{ product.total_price }}</th>
-                <td><a style="text-decoration: none; color:red; font-weight:red;" href=""> Remove Product </a></td>
-            </tr>
+            {% set product_obj = products_for_order.get(product.item_id) %}
+                <tr>
+                    <th scope="row">{{ product.item_id }}</th>
+                    <th scope="row">{{ product_name }}</th>
+                    <th scope="row">{{ product.quantity }}</th>
+                    <th scope="row">{{ product_obj.price }}</th>
+                    <th scope="row">{{ product.total_price }}</th>
+                    <td><a style="text-decoration: none; color:red; font-weight:red;" href=""> Remove Product </a></td>
+                </tr>
             {% endfor %}
         </tbody>
     </table>
