@@ -34,31 +34,42 @@
         </tbody>
     </table>
 </div>
-<h1>Add Product to Order</h1>
-    {% with messages = get_flashed_messages() %}
-        {% if messages %}
-            <div class="alert alert-danger">
-                <ul>
-                    {% for message in messages %}
-                        <li>{{ message }}</li>
-                    {% endfor %}
-                </ul>
-            </div>
-        {% endif %}
-    {% endwith %}
-    <form method="POST" action="{{ url_for('order',id=order) }}" id="orderForm">
-        {{ form.csrf_token }}
-        {{form.product_id.label}}
-        {{form.product_id}}
-        {{form.quantity.label}}
-        {% if form.quantity.errors %}
-            {% for error in form.quantity.errors %}
-            <p style="color:red; font-weight:bold">{{error}}</p>    
-            {% endfor %}
-        {% endif %}
-        {{form.quantity}}
-        </div>
-        {{ form.submit() }}
-    </form>
+<div class="content-section">
+    <div class="title">
+        <h1>Add Product to Order</h1>
+    </div>   
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+<div class="alert alert-danger">
+    <ul>
+        {% for message in messages %}
+        <li>{{ message }}</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
+{% endwith %}
+<form method="POST" action="{{ url_for('order',id=order) }}" id="orderForm">
+    {{ form.csrf_token }}
+    {{form.product_id.label}}
+    {{form.product_id}}
+    {{form.quantity.label}}
+    {% if form.quantity.errors %}
+    {% for error in form.quantity.errors %}
+    <p style="color:red; font-weight:bold">{{error}}</p>    
+    {% endfor %}
+    {% endif %}
+    {{form.quantity}}
+    {{ form.submit() }}
+</div>
+</form>
+</div>
+
+<div class="content-section">
+    <div class="title">
+        <h1>Submit Order</h1>
+    </div>
+    <a href="{{ url_for('close_order', id=order) }}">Click here to submit order</a>
+</div>
 
 {% endblock body %}

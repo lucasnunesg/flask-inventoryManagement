@@ -146,6 +146,17 @@ def delete_orderitem(item_id, order_id):
     return redirect(url_for("order", id=order_id))
 
 
+@app.route("/close-order/<id>", methods=["GET", "POST"])
+def close_order(id):
+    order = Order.query.get(id)
+    order_items = OrderItem.query.filter_by(order_id=order.id).all()
+    for item in order_items:
+        product = Product.query.get(item.item_id)
+        product.quantity_available -= item.quantity
+        db.session.commit()
+    return redirect(url_for("products"))
+
+
 @app.route("/logout", methods=["GET", "POST"])
 def logout():
     return render_template("index.html")
