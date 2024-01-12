@@ -54,6 +54,7 @@ class OrderItemForm(FlaskForm):
 class AddOrderItemForm(FlaskForm):
     product_id = SelectField("Product ID", coerce=int, validators=[DataRequired()])
     quantity = IntegerField("Quantity", validators=[DataRequired()])
+    customer_id = HiddenField("customer_id")
 
     def validate_quantity(self, quantity):
         product = Product.query.get(self.product_id.data)

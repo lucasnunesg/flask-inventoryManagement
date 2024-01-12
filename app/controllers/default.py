@@ -3,7 +3,7 @@ from sqlalchemy.exc import IntegrityError
 
 from app import app, db
 
-from ..models.forms import AddOrderItemForm, EditProductForm, OrderForm, OrderItemForm
+from ..models.forms import AddOrderItemForm, EditProductForm, OrderItemForm
 from ..models.tables import Customer, Order, OrderItem, Product
 
 
@@ -27,7 +27,6 @@ def product(id):
 @app.route("/product/<id>/update", methods=["GET", "POST"])
 def update_product(id):
     product = Product.query.get(id)
-    products = Product.query.order_by(Product.id).all()
     form = EditProductForm(obj=product)
 
     if form.validate_on_submit():
@@ -35,7 +34,7 @@ def update_product(id):
         product.price = form.price.data
         product.quantity_available = form.quantity_available.data
         db.session.commit()
-        return redirect(url_for("products", products=products))
+        return redirect(url_for("products"))
     return render_template("edit_product.html", product=product, form=form)
 
 
@@ -79,13 +78,13 @@ def order(id):
     products = Product.query.all()
     form.product_id.choices = [(product.id, product.name) for product in products]
 
-    customer_id = request.args.get("customer_id")
-    customer = Customer.query.get(customer_id)
-
     order_items = OrderItem.query.filter_by(order_id=id).all()
     product_names = [Product.query.get(item.item_id).name for item in order_items]
     print(type(id))
     order = Order.query.get(id)
+    customer_id = order.customer_id
+    customer = Customer.query.get(customer_id)
+    print("AAAAAAAVBBBBB: ", customer_id)
     products_for_order = {
         item.item_id: Product.query.get(item.item_id) for item in order_items
     }
@@ -110,11 +109,9 @@ def order(id):
             error_info = str(e.orig)
             if "UNIQUE constraint" in error_info:
                 flash("Same product ID already in order", "error")
-                print("ERRO INTEGRITY")
             else:
                 flash("Unknown error", "error")
         return redirect(url_for("order", id=order.id, customer_id=customer_id))
-
     return render_template(
         "order.html",
         order=id,
