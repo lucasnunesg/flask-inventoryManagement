@@ -28,7 +28,7 @@
                     <th scope="row">{{ product.quantity }}</th>
                     <th scope="row">{{ product_obj.price }}</th>
                     <th scope="row">{{ product.total_price }}</th>
-                    <td><a style="text-decoration: none; color:red; font-weight:red;" href=""> Remove Product </a></td>
+                    <td><a style="text-decoration: none; color:red; font-weight:red;" href="{{url_for('delete_orderitem', item_id=product.item_id, order_id=order)}}"> Remove Product </a></td>
                 </tr>
             {% endfor %}
         </tbody>

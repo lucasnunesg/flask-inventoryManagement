@@ -38,6 +38,19 @@ def update_product(id):
     return render_template("edit_product.html", product=product, form=form)
 
 
+@app.route("/product/<id>/delete", methods=["GET", "POST", "DELETE"])
+def delete_product(id):
+    try:
+        product = Product.query.get(id)
+        db.session.delete(product)
+        db.session.commit()
+    except IntegrityError as e:
+        db.session.rollback()
+        error_info = str(e.orig)
+        print(error_info)
+    return redirect(url_for("products"))
+
+
 @app.route("/add-product", methods=["GET", "POST"])
 def add_product():
     return render_template("add_product.html")
@@ -84,7 +97,6 @@ def order(id):
     order = Order.query.get(id)
     customer_id = order.customer_id
     customer = Customer.query.get(customer_id)
-    print("AAAAAAAVBBBBB: ", customer_id)
     products_for_order = {
         item.item_id: Product.query.get(item.item_id) for item in order_items
     }
@@ -122,6 +134,16 @@ def order(id):
         form=form,
         products_for_order=products_for_order,
     )
+
+
+@app.route("/delete-orderitem/<item_id>/<order_id>", methods=["GET", "POST", "DELETE"])
+def delete_orderitem(item_id, order_id):
+    order_item = (
+        OrderItem.query.filter_by(item_id=item_id).filter_by(order_id=order_id).first()
+    )
+    db.session.delete(order_item)
+    db.session.commit()
+    return redirect(url_for("order", id=order_id))
 
 
 @app.route("/logout", methods=["GET", "POST"])

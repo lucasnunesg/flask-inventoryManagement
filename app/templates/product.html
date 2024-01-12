@@ -21,7 +21,7 @@
 
         <div class="card m-4" style="width: 18rem">
             <div class="card-body">
-                <h5 class="cart-title text-center">Namee</h5>
+                <h5 class="cart-title text-center">Name</h5>
                 <div style="font-size: 30px;" class="text-center">
                     <span><i class="icon-shopping-cart"></i></span>
                 </div>
@@ -50,7 +50,7 @@
         </div>
         <div class="row mx-auto justify-content-center">
             <a style="max-width:60%;" class="btn btn-outline-success btn-sm mb-3" href="{{ url_for('update_product', id=product.id) }}">Update product</a>    
-            <a style="max-width:60%;" class="btn btn-danger btn-sm" href="#">Delete product</a>
+            <a style="max-width:60%;" class="btn btn-danger btn-sm" href="{{url_for('delete_product', id=product.id)}}">Delete product</a>
         </div>
     </div>
 </div>
