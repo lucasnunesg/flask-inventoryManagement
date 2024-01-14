@@ -136,6 +136,40 @@ def order(id):
     )
 
 
+@app.route("/order/<id>/details")
+def order_details(id):
+    order_items = OrderItem.query.filter_by(order_id=id).all()
+    order = Order.query.get(id)
+    customer = Customer.query.get(id)
+    product_names = [Product.query.get(item.item_id).name for item in order_items]
+    products_for_order = {
+        item.item_id: Product.query.get(item.item_id) for item in order_items
+    }
+
+    return render_template(
+        "order_details.html",
+        id=id,
+        order=order,
+        order_items=order_items,
+        customer=customer,
+        product_names=product_names,
+        products_for_order=products_for_order,
+        zip=zip,
+    )
+
+
+@app.route("/orders")
+def orders():
+    orders = Order.query.all()
+    customer_for_order = {
+        order.customer_id: Customer.query.get(order.customer_id) for order in orders
+    }
+
+    return render_template(
+        "orders.html", orders=orders, customer_for_order=customer_for_order
+    )
+
+
 @app.route("/delete-orderitem/<item_id>/<order_id>", methods=["GET", "POST", "DELETE"])
 def delete_orderitem(item_id, order_id):
     order_item = (

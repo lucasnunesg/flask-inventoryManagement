@@ -1,0 +1,53 @@
+{% extends "index.html" %}
+{% block body %}
+
+
+
+<div class="content-section">
+    <div class="title">    
+        <h1>Orders</h1>
+    </div>
+    
+    <table class="table table-striped table-borderless table-hover text-center">
+        <thead class="table-dark table-sm">
+            <tr>
+                <th scope="col">Order ID</th>
+                <th scope="col">Customer Name</th>
+                <th scope="col">Order Date</th>
+                <th scope="col">Shipped date</th>
+                <th scope="col">Delivered date</th>
+                <th scope="col">Coupon</th>
+                <th scope="col">Order Details</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in orders %}
+            {% set customer_obj = customer_for_order.get(order.customer_id) %}
+            <tr>
+                <th scope="row">{{ order.id }}</th>
+                <th scope="row">{{ customer_obj.first_name }} {{ customer_obj.last_name }}</th>
+                <th scope="row">{{ order.order_date.strftime('%Y-%m-%d %H:%M') }}</th>
+                <th scope="row">
+                    {% if order.shipped_date %}
+                        {{ order.shipped_date.strftime('%Y-%m-%d %H:%M') }}
+                    {% endif %}
+                </th>
+                <th scope="row">
+                    {% if order.delivered_date %}
+                        {{ order.delivered_date.strftime('%Y-%m-%d %H:%M') }}
+                    {% endif %}
+                </th>
+                <th scope="row">
+                    {% if order.coupon_code %}
+                        {{ order.coupon_code }}
+                    {% endif %}
+                </th>
+                <td><a style="text-decoration: none;" href="{{ url_for('order_details', id=order.id)}}"> View Details </a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+</div>
+{% endblock %}
+    

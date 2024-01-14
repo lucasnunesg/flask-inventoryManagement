@@ -1,0 +1,66 @@
+{% extends "index.html" %}
+{% block body %}
+
+
+
+<div class="content-section">
+    <div class="title">    
+        <h1>Order #{{order.id}} details</h1>
+    </div>
+    
+    <table class="table table-striped table-borderless table-hover text-center">
+        <thead class="table-dark table-sm">
+            <tr>
+                <th scope="col">Order ID</th>
+                <th scope="col">Customer Name</th>
+                <th scope="col">Order Date</th>
+                <th scope="col">Shipped date</th>
+                <th scope="col">Delivered date</th>
+                <th scope="col">Coupon</th>
+            </tr>
+        </thead>
+        <tbody>
+                <tr>
+                    <th scope="row">{{ id }}</th>
+                    <th scope="row">{{ customer.first_name }} {{ customer.last_name }}</th>
+                    <th scope="row">{{ order.order_date.strftime('%Y-%m-%d %H:%M') }}</th>
+                    <th scope="row">{{ order.shipped_date.strftime('%Y-%m-%d %H:%M') }}</th>
+                    <th scope="row">{{ order.delivered_date.strftime('%Y-%m-%d %H:%M') }}</th>
+                    <th scope="row">{{ order.coupon_code }}</th>
+                </tr>
+        </tbody>
+    </table>
+    
+</div>
+
+<div class="content-section">
+    <div class="title">    
+        <h1>Order #{{order.id}} Items</h1>
+    </div>
+    
+    <table class="table table-striped table-borderless table-hover text-center">
+        <thead class="table-dark table-sm">
+            <tr>
+                <th scope="col">Product ID</th>
+                <th scope="col">Name</th>
+                <th scope="col">Quantity</th>
+                <th scope="col">Unit Price</th>
+                <th scope="col">Total Price</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for product, product_name in zip(order_items, product_names) %}
+            {% set product_obj = products_for_order.get(product.item_id) %}
+                <tr>
+                    <th scope="row">{{ product.item_id }}</th>
+                    <th scope="row">{{ product_name }}</th>
+                    <th scope="row">{{ product.quantity }}</th>
+                    <th scope="row">{{ product_obj.price }}</th>
+                    <th scope="row">{{ product.total_price }}</th>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+</div>
+{% endblock body %}
