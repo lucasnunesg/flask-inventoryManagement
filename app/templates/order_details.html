@@ -23,9 +23,20 @@
                 <tr>
                     <th scope="row">{{ id }}</th>
                     <th scope="row">{{ customer.first_name }} {{ customer.last_name }}</th>
-                    <th scope="row">{{ order.order_date.strftime('%Y-%m-%d %H:%M') }}</th>
-                    <th scope="row">{{ order.shipped_date.strftime('%Y-%m-%d %H:%M') }}</th>
-                    <th scope="row">{{ order.delivered_date.strftime('%Y-%m-%d %H:%M') }}</th>
+                    <th scope="row">
+                        {% if order.order_date %}
+                            {{ order.order_date.strftime('%Y-%m-%d %H:%M') }}
+                        {% endif %}
+                    </th>
+                    <th scope="row">
+                        {% if order.shipped_date %}
+                            {{ order.shipped_date.strftime('%Y-%m-%d %H:%M') }}
+                        {% endif %}
+                    </th>
+                    <th scope="row">
+                        {% if order.delivered_date %}
+                            {{ order.delivered_date.strftime('%Y-%m-%d %H:%M') }}</th>
+                        {% endif %}
                     <th scope="row">{{ order.coupon_code }}</th>
                 </tr>
         </tbody>

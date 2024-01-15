@@ -1,14 +1,29 @@
-from flask import flash, redirect, render_template, request, url_for
+from flask import flash, redirect, render_template, url_for
+from flask_login import login_required
 from sqlalchemy.exc import IntegrityError
 
-from app import app, db
+from app import app, bcrypt, db
 
-from ..models.forms import AddOrderItemForm, EditProductForm, OrderItemForm
+from ..models.forms import (
+    AddOrderItemForm,
+    CreateAccountForm,
+    EditProductForm,
+    LoginForm,
+    OrderItemForm,
+)
 from ..models.tables import Customer, Order, OrderItem, Product
 
 
 @app.route("/", methods=["GET", "POST"])
 def index():
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        if user and bcrypt.check_password_hash(
+            user.password.encode("utf-8", form.password.data)
+        ):
+            login_user(user)
+            return redirect(url_for("products", user_id=user.id))
     return render_template("index.html")
 
 
@@ -136,6 +151,18 @@ def order(id):
     )
 
 
+@app.route("/orders")
+def orders():
+    orders = Order.query.all()
+    customer_for_order = {
+        order.customer_id: Customer.query.get(order.customer_id) for order in orders
+    }
+
+    return render_template(
+        "orders.html", orders=orders, customer_for_order=customer_for_order
+    )
+
+
 @app.route("/order/<id>/details")
 def order_details(id):
     order_items = OrderItem.query.filter_by(order_id=id).all()
@@ -155,18 +182,6 @@ def order_details(id):
         product_names=product_names,
         products_for_order=products_for_order,
         zip=zip,
-    )
-
-
-@app.route("/orders")
-def orders():
-    orders = Order.query.all()
-    customer_for_order = {
-        order.customer_id: Customer.query.get(order.customer_id) for order in orders
-    }
-
-    return render_template(
-        "orders.html", orders=orders, customer_for_order=customer_for_order
     )
 
 

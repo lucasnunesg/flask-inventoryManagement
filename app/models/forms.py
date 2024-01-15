@@ -11,9 +11,49 @@ from wtforms import (
     SubmitField,
     ValidationError,
 )
-from wtforms.validators import DataRequired, Email
+from wtforms.validators import DataRequired, Email, EqualTo, Length
 
 from .tables import Product
+
+
+class LoginForm(FlaskForm):
+    email = StringField(label="E-mail", validators=[DataRequired(), Email()])
+    password = PasswordField(label="Password", validators=[DataRequired()])
+    submit_button = SubmitField(label="Log in")
+
+    def validate_login(self, email):
+        user = User.query.filter_by(email=email.data).first()
+
+        if not user:
+            raise ValidationError("E-mail not registered, please create an account.")
+
+
+class CreateAccountForm(FlaskForm):
+    email = StringField(label="E-mail", validators=[DataRequired(), Email()])
+    password = PasswordField(
+        label="Password", validators=[DataRequired(), Length(6, 28)]
+    )
+    password_confirmation = PasswordField(
+        label="Password",
+        validators=[
+            DataRequired(),
+            Length(6, 28),
+            EqualTo("password", message="passwords must match"),
+        ],
+    )
+    submit_button = SubmitField(label="Create an account")
+
+    def validate_email(self, email):
+        user = User.query.filter_by(email=email.data).first()
+
+        if user:
+            raise ValidationError("E-mail already registered, Log in to proceed")
+
+    def validate_username(self, username):
+        user = User.query.filter_by(username=username.data).first()
+
+        if user:
+            raise ValidationError("Username already taken, please choose another")
 
 
 class EditProductForm(FlaskForm):
@@ -76,29 +116,3 @@ class OrderForm(FlaskForm):
     total_items = HiddenField("Total Items")
     order_items = FieldList(FormField(OrderItemForm), max_entries=1)
     submit = SubmitField("Submit")
-
-    """def validate_order_items(self, order_items):
-        print("Order Items:", self.order_items.data)
-        print("Total Items:", self.total_items.data)
-        order_item = order_items[0]
-        print("AAAAA ", order_item.product_id.data)
-        for item in order_items:
-            product_id = item.product_id.data
-            quantity = item.quantity.data
-
-            print("Product id: ", product_id, "Qty: ", quantity)
-            product = Product.query.get(product_id)
-            print("Product: ", product)
-            stock_quantity = product.quantity_available
-            if quantity > stock_quantity:
-                raise ValidationError(
-                    "Not enough stock for this item. Quantity available"
-                )"""
-
-
-class LoginForm(FlaskForm):
-    pass
-
-
-class CreateAccountForm(FlaskForm):
-    pass
