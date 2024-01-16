@@ -38,13 +38,16 @@ def create_account():
     if form.validate_on_submit():
         password = bcrypt.generate_password_hash(form.password.data).decode("utf-8")
         user = User(
-            username=form.username.data, email=form.email.data, password=password
+            username=form.username.data,
+            email=form.email.data,
+            password=password,
         )
 
         db.session.add(user)
         db.session.commit()
         login_user(user, remember=True)
-        session["user"] = user
+        session["user_id"] = user.id
+        session["username"] = user.username
         return redirect(url_for("products"))
 
     return render_template("create_account.html", form=form)
