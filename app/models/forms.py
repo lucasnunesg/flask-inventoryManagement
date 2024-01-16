@@ -13,7 +13,7 @@ from wtforms import (
 )
 from wtforms.validators import DataRequired, Email, EqualTo, Length
 
-from .tables import Product
+from .tables import Product, User
 
 
 class LoginForm(FlaskForm):
@@ -29,6 +29,7 @@ class LoginForm(FlaskForm):
 
 
 class CreateAccountForm(FlaskForm):
+    username = StringField(label="Username", validators=[DataRequired()])
     email = StringField(label="E-mail", validators=[DataRequired(), Email()])
     password = PasswordField(
         label="Password", validators=[DataRequired(), Length(6, 28)]

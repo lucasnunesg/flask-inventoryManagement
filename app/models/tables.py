@@ -16,6 +16,12 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String, nullable=False, unique=True)
     password = db.Column(db.String, nullable=False)
 
+    def __repr__(self):
+        return self.username
+
+    def __str__(self):
+        return self.username
+
 
 class Customer(db.Model):
     __tablename__ = "customer"
@@ -68,3 +74,6 @@ class OrderItem(db.Model):
     item_id = db.Column(db.Integer, db.ForeignKey("product.id"), primary_key=True)
     quantity = db.Column(db.Integer, nullable=False)
     total_price = db.Column(db.Integer, nullable=False)
+
+    def __repr__(self):
+        return f"<OrderItem object for order: {self.order_id}"

@@ -11,6 +11,14 @@
     {% endif %}
     {{ form.email }}
 
+    {{ form.username.label }}
+    {% if form.username.errors %}
+    {% for error in form.username.errors %}
+        <p style="color: red;font-weight: bold;">{{ error }}</p>
+    {% endfor %}
+    {% endif %}
+    {{ form.username }}
+
     {{ form.password.label }}
     {% if form.password.errors %}
     {% for error in form.password.errors %}
@@ -19,7 +27,15 @@
     {% endif %}
     {{ form.password }}
 
+    {{ form.password_confirmation.label }}
+    {% if form.password_confirmation.errors %}
+    {% for error in form.password_confirmation.errors %}
+        <p style="color: red;font-weight: bold;">{{ error }}</p>
+    {% endfor %}
+    {% endif %}
+    {{ form.password_confirmation }}
+
     {{ form.submit_button }}
-    <a href="{{ url_for('create_account') }}">Don't have an account? Click here to register.</a>
+    <a href="{{ url_for('index') }}">Already regiestered? Click here to Log in.</a>
 </form>
 {% endblock body %}

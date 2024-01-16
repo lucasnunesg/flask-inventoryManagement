@@ -16,9 +16,23 @@
             <a class="nav-link" href="{{ url_for('orders') }}">Orders</a>
           </li>
         </ul>
-        <form class="d-flex" action="{{ url_for('logout') }}">
-          <button type="submit" class="btn btn-outline-danger">Logout</button>
-        </form>
+          <a href="#" class="nav-link">
+            {% if 'username' in session %}
+            <div class="d-flex">
+              Hello, {{ session.username }}!
+            </div>
+            <form class="d-flex" action="{{ url_for('logout') }}">
+              <button type="submit" class="btn btn-outline-danger">Logout</button>
+            </form>
+            {% else %}
+            <div class="d-flex">
+              Hello, guest!
+            </div>
+            <form class="d-flex" action="{{ url_for('index') }}">
+              <button type="submit" class="btn btn-outline-success">Login</button>
+            </form>
+            {% endif %}
+          </a>
       </div>
     </div>
   </nav>
