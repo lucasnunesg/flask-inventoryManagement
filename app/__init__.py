@@ -2,6 +2,7 @@ from flask import Flask
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager, UserMixin
 from flask_migrate import Migrate
+from flask_restx import Api, Namespace, Resource
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
